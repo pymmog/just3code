@@ -111,9 +111,9 @@ DNS-safe sanitization as Alchemy physical resource names, so `prod` uses
 domain override.
 
 The stack's `PublishClientConfig` action ([`src/clientConfig.ts`](./src/clientConfig.ts)) writes the
-deployed relay URL and tracing configuration into the repository-root `.env`, so subsequent source
-builds point at the relay that was just deployed without copying values manually. It runs only when
-one of those outputs changed, and `T3CODE_RELAY_CLIENT_CONFIG_ENV` redirects it to another file.
+deployed relay URL into the repository-root `.env`, so subsequent source builds point at the relay
+that was just deployed without copying values manually. It runs only when the URL changed, and
+`T3CODE_RELAY_CLIENT_CONFIG_ENV` redirects it to another file.
 
 ### Deployment CI
 

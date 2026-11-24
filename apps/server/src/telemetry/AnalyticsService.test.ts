@@ -203,32 +203,6 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
     }),
   );
 
-  it.effect("client owner reports cannot use up the server's owner cap", () =>
-    Effect.gen(function* () {
-      const batches = yield* sendFor(
-        10,
-        respondWithStatus(204),
-        Effect.gen(function* () {
-          const analytics = yield* AnalyticsService.AnalyticsService;
-          yield* analytics.recordOwners(
-            Array.from({ length: 1_001 }, (_, index) => ({
-              source: "device" as const,
-              ownerId: index.toString(16).padStart(64, "0"),
-            })),
-            "client",
-          );
-          // The event buffer also holds 1,000, so send the client events first.
-          yield* analytics.flush;
-          yield* analytics.recordOwners([{ source: "connect", ownerId: "a".repeat(64) }], "server");
-        }),
-      );
-      const owners = batches.flat().map((event) => event.properties.observedBy);
-
-      assert.equal(owners.filter((observedBy) => observedBy === "client").length, 1_000);
-      assert.equal(owners.filter((observedBy) => observedBy === "server").length, 1);
-    }),
-  );
-
   it.effect("keeps a failed batch through a 20-minute outage and sends it once after", () =>
     Effect.gen(function* () {
       const ingest = failingFor(20);
